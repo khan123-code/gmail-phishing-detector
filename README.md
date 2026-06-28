@@ -77,6 +77,7 @@ python -m uvicorn app:app --reload --port 8000
 
 ## Project Structure
 
+```
 gmail-phishing-detector/
 ├── backend/
 │   ├── train.py
@@ -96,7 +97,7 @@ gmail-phishing-detector/
 │   ├── popup.js
 │   └── icons/
 └── README.md
-
+```
 ## Note
 The dataset and trained model file are not included in this repository 
 due to file size limits. Download the dataset from Kaggle and run 
