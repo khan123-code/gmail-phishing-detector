@@ -1,7 +1,8 @@
-﻿from fastapi import FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import smart_predict  # Yeh import hote hi semantic_analyzer ka model load ho jayega (one-time)
+from summarizer import summarize_email
 
 app = FastAPI(title="Smart Phishing Detector API")
 
@@ -16,6 +17,8 @@ class EmailRequest(BaseModel):
     subject: str = ""
     sender:  str = ""
     body:    str = ""
+    prediction: str = ""
+    phishing_score: int = 0
 
 @app.get("/")
 def root():
@@ -24,4 +27,11 @@ def root():
 @app.post("/predict")
 def predict(email: EmailRequest):
     result = smart_predict.smart_predict(email.subject, email.sender, email.body)
+    return result
+
+
+
+@app.post("/summarize")
+def summarize(email: EmailRequest):
+    result = summarize_email(email.subject, email.sender, email.body, email.prediction, email.phishing_score)
     return result

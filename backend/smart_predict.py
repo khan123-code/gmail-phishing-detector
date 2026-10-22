@@ -8,6 +8,7 @@ def calculate_final_score(domain_result, credential_result, url_result, semantic
     domain_trust = domain_result["trust_score"]
     domain_phishing_score = 100 - domain_trust
 
+
     has_lookalike = any("LOOKALIKE" in f for f in domain_result["flags"])
     if has_lookalike:
         domain_phishing_score = min(100, domain_phishing_score + 40)
@@ -39,6 +40,8 @@ def calculate_final_score(domain_result, credential_result, url_result, semantic
         "url_check":        {"raw_score": round(url_score), "weight": 10, "weighted": round(url_score * 0.10, 1)},
         "behavior_check":   {"raw_score": round(behavioral_score), "weight": 10, "weighted": round(behavioral_score * 0.10, 1)},
     }
+
+    
 
     final_score = sum(v["weighted"] for v in weighted_breakdown.values())
 
@@ -144,6 +147,30 @@ def calculate_final_score(domain_result, credential_result, url_result, semantic
         if final_score < 75:
             rule_applied = "No email authentication (SPF/DMARC) configured + credential request -> score raised to minimum 75"
         final_score = max(final_score, 75)
+
+    # NEW RULE - Context-Aware Override for transaction notifications
+    # We do NOT check semantic intent here because BERT sometimes misclassifies
+    # debit/credit notifications as requesting_action due to action words
+    # Instead we rely on the combination of ALL other signals being zero
+    domain_resolves = any(
+        "resolves to valid IP" in s
+        for s in domain_result.get("trusted_signals", [])
+    )
+    has_dmarc = auth_result.get("has_dmarc", False)
+    zero_risk_content = (
+        not credential_result["is_requesting_credentials"]
+        and url_result["url_risk_score"] < 10
+        and not credential_result["urgency_detected"]
+        and not credential_result["scam_detected"]
+        and not credential_result.get("bec_detected")
+        and credential_result["credential_risk_score"] == 0
+    )
+    if (zero_risk_content
+            and domain_resolves
+            and has_dmarc
+            and final_score < 45):
+        final_score = min(final_score, 25)
+        rule_applied = "Zero content risk with valid domain resolution and DMARC - capped at Safe"
 
     return round(min(100, max(0, final_score))), weighted_breakdown, rule_applied
 
@@ -254,3 +281,5 @@ def smart_predict(subject, sender, body):
         "layer_breakdown": breakdown,
         "deciding_rule": rule_applied,
     }
+
+

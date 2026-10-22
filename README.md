@@ -56,7 +56,7 @@ in real-time inside Gmail using Machine Learning and multi-layer intelligent det
 ## How to Run
 
 ### 1. Install Python dependencies
-pip install -r backend/requirements.txt
+pip install -r requirements.txt
 
 ### 2. Download dataset from Kaggle
 kaggle datasets download -d naserabdullahalam/phishing-email-dataset -p dataset/ --unzip
@@ -102,6 +102,21 @@ gmail-phishing-detector/
 The dataset and trained model file are not included in this repository 
 due to file size limits. Download the dataset from Kaggle and run 
 train.py to generate the model automatically.
+
+## Email Summarization
+
+Use the Summarize button in Gmail to generate a short email summary.
+This feature uses the Gemini API through the backend's `/summarize` endpoint.
+
+Before starting the backend, create `backend/.env` containing:
+
+```env
+GEMINI_API_KEY=your_api_key_here
+```
+
+Replace the placeholder with your own key locally. Never commit this file.
+Email content submitted for summarization is sent to the Gemini API.
+
 
 ## Research Reference
 Kyaw, P.H.; Gutierrez, J.; Ghobakhlou, A. 
