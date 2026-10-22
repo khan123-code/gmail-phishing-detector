@@ -3,7 +3,7 @@ AI-powered Chrome Extension that detects phishing emails in real-time inside Gma
 
 ## Project Demo
 
-[Watch the demo video](docs/demo.mp4)
+[Watch or download the demo video](https://github.com/khan123-code/gmail-phishing-detector/raw/refs/heads/main/docs/demo.mp4)
 
 
 # Gmail Phishing Detector
