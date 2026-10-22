@@ -1,5 +1,11 @@
 # gmail-phishing-detector
 AI-powered Chrome Extension that detects phishing emails in real-time inside Gmail using Machine Learning, BERT semantic analysis, and SPF/DMARC email authentication
+
+## Project Demo
+
+[Watch the demo video](docs/demo.mp4)
+
+
 # Gmail Phishing Detector
 
 An AI-powered Chrome Extension that automatically detects phishing emails 
